@@ -66,3 +66,6 @@
 ###> baldinof/roadrunner-bundle ###
 /bin/rr
 ###< baldinof/roadrunner-bundle ###
+
+.DS_Store
+/.idea
