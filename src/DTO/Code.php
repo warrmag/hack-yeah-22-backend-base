@@ -8,6 +8,10 @@ class Code
         public readonly string $code
     )
     {
+    }
 
+    public function __toString(): string
+    {
+        return $this->code;
     }
 }
