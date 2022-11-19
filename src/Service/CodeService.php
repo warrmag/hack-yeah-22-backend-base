@@ -8,10 +8,14 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class CodeService
 {
-    public function __construct(private readonly EntityManagerInterface $em)
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly BarCodeLookupClient $barCodeLookupClient,
+    )
     {
     }
 
+    /** @throws \App\Exception\BarCodeLookupProductNotFoundException */
     public function obtainTrash(Code $code): Trash
     {
         $trash = $this->em->find(Trash::class, (string)$code);
@@ -19,8 +23,12 @@ class CodeService
             return $trash;
         }
 
+        $barCodeLookupProduct = $this->barCodeLookupClient->findProductByBarCode((string) $code);
         $trash = new Trash(
-            (string) $code
+            code: (string) $code,
+            title: $barCodeLookupProduct->title,
+            description: $barCodeLookupProduct->description,
+            imageUrl: $barCodeLookupProduct->imageUrl,
         );
 
         $this->em->persist($trash);
