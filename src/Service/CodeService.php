@@ -22,8 +22,10 @@ class CodeService
         $trash = new Trash(
             (string) $code
         );
-        $this->em->persist($trash);
 
+        $this->em->persist($trash);
         $this->em->flush();
+
+        return $trash;
     }
 }
