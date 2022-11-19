@@ -26,10 +26,13 @@ final class ScanCode
     {
         $code = $this->serializer->deserialize($request->getContent(), Code::class, 'json');
         $trash = $this->codeService->obtainTrash($code);
-        $this->ratingRepository->fetchRating($trash);
+        $rating = $this->ratingRepository->fetchRating($trash);
 
         return new JsonResponse(
-            data: $this->serializer->serialize($trash, 'json'),
+            data: $this->serializer->serialize([
+                'trash' => $trash,
+                'rating' => $rating
+            ], 'json'),
             status: Response::HTTP_OK,
             json: true
         );

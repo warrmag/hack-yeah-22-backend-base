@@ -25,6 +25,8 @@ services:
             - '../src/Controller/'
             - '../src/Kernel.php'
 
+    App\Repository\:
+        resource: '../src/Repository/*'
     App\Controller\:
         resource: '../src/Controller/*'
         tags: [ 'controller.service_arguments' ]
