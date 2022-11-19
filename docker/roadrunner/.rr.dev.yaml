@@ -1,0 +1,41 @@
+version: "2.7"
+
+server:
+    command: php /srv/app/public/index.php
+    env:
+        - APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
+        - XDEBUG_SESSION: '1'
+
+http:
+    address: 0.0.0.0:8080
+    fcgi:
+        address: 0.0.0.0:9000 
+    middleware: [ "static", "gzip" ]
+    uploads:
+        forbid: [ ".php", ".exe", ".bat" ]
+    static:
+        dir: "/srv/app/public"
+        forbid: [ ".php", ".htaccess" ]
+
+logs:
+    mode: development
+    channels:
+        http:
+            level: debug # Log all http requests, set to info to disable
+        server:
+            level: info # Everything written to worker stderr is logged
+            mode: raw
+        metrics:
+            level: debug
+
+reload:
+    enabled: true
+    interval: 5s
+    patterns: [ ".php", ".yaml" ]
+    services:
+        http:
+            dirs: [ "/srv/app/src", "/srv/app/config" ]
+            recursive: true
+
+status:
+    address: 0.0.0.0:2114
