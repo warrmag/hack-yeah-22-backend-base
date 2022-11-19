@@ -12,8 +12,13 @@ class CodeService
     {
     }
 
-    public function save(Code $code): void
+    public function obtainTrash(Code $code): Trash
     {
+        $trash = $this->em->find(Trash::class, (string)$code);
+        if ($trash instanceof Trash) {
+            return $trash;
+        }
+
         $trash = new Trash(
             (string) $code
         );
