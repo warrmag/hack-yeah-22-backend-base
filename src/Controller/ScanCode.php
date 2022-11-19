@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\Code;
+use App\Repository\RatingRepository;
 use App\Service\CodeService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +16,8 @@ final class ScanCode
 {
     public function __construct(
         private readonly SerializerInterface $serializer,
-        private readonly CodeService $codeService
+        private readonly CodeService $codeService,
+        private readonly RatingRepository $ratingRepository
     )
     {
     }
@@ -24,6 +26,7 @@ final class ScanCode
     {
         $code = $this->serializer->deserialize($request->getContent(), Code::class, 'json');
         $trash = $this->codeService->obtainTrash($code);
+        $this->ratingRepository->fetchRating($trash);
 
         return new JsonResponse(
             data: $this->serializer->serialize($trash, 'json'),
