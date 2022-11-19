@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\Code;
+use App\Exception\BarCodeLookupProductNotFoundException;
 use App\Service\CodeService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,13 +23,25 @@ final class ScanCode
 
     public function __invoke(Request $request): JsonResponse
     {
-        $code = $this->serializer->deserialize($request->getContent(), Code::class, 'json');
-        $trash = $this->codeService->obtainTrash($code);
+        try {
+            $code = $this->serializer->deserialize($request->getContent(), Code::class, 'json');
+            $trash = $this->codeService->obtainTrash($code);
 
-        return new JsonResponse(
-            data: $this->serializer->serialize($trash, 'json'),
-            status: Response::HTTP_OK,
-            json: true
-        );
+            return new JsonResponse(
+                data: $this->serializer->serialize($trash, 'json'),
+                status: Response::HTTP_OK,
+                json: true
+            );
+        }
+        catch (BarCodeLookupProductNotFoundException $e) {
+            return new JsonResponse(
+                data: $this->serializer->serialize([
+                    'error' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                ], 'json'),
+                status: Response::HTTP_NOT_FOUND,
+                json: true
+            );
+        }
     }
 }

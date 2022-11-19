@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\DTO\BarCodeLookupProduct;
+use App\Exception\BarCodeLookupProductNotFoundException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class BarCodeLookupClient
@@ -23,7 +24,7 @@ class BarCodeLookupClient
         ]);
 
         if ($response->getStatusCode() !== 200) {
-            throw new \Exception('Error while fetching product from BarCodeLookup');
+            throw new BarCodeLookupProductNotFoundException($barCode);
         }
 
         $productData = $response->toArray()['products'][0];
