@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity, ORM\Table(name: 'user')]
 class User implements UserInterface
 {
     public const PROVIDER_GOOGLE = 'google';
