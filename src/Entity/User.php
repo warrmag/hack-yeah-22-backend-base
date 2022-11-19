@@ -10,22 +10,25 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[
+    ORM\Entity,
+    ORM\Table(name: 'users')
+]
 class User implements UserInterface
 {
     public const PROVIDER_GOOGLE = 'google';
 
     public const PROVIDER_FACEBOOK = 'facebook';
 
+    #[
+        ORM\Column(type: 'uuid', unique: true),
+        ORM\Id,
+        ORM\CustomIdGenerator(class: UuidGenerator::class),
+        Assert\Uuid
+    ]
+    public readonly Uuid $id;
+
     public function __construct(
-        #[
-            ORM\Column(type: 'uuid', unique: true),
-            ORM\Id,
-            ORM\GeneratedValue,
-            ORM\CustomIdGenerator(class: UuidGenerator::class),
-            Assert\Uuid
-        ]
-        public readonly Uuid $id,
         #[
             ORM\Column(type: 'string', unique: true),
             Assert\Unique(normalizer: 'strtolower')
@@ -48,6 +51,7 @@ class User implements UserInterface
         #[ORM\Column(type: 'string', nullable: true)]
         private ?string $nickname = null
     ) {
+        $this->id = Uuid::v4();
     }
 
     public function getRoles(): array

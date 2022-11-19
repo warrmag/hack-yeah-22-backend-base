@@ -13,6 +13,6 @@ final class Check
 {
     public function __invoke(Request $request): JsonResponse
     {
-        return new JsonResponse(['status' => 'ok']);
+        return new JsonResponse(['token' => $request->get('token')]);
     }
 }
