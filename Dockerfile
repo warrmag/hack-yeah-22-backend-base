@@ -68,13 +68,11 @@ COPY --from=composer/composer:2-bin --link /composer /usr/bin/composer
 COPY composer.* symfony.* ./
 
 RUN set -eux; \
-    if [ -f composer.json ]; then \
-		composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress; \
-		composer clear-cache; \
-    fi
+	composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress; \
+	composer clear-cache
 
 # copy sources
-COPY --link  . .
+COPY --link  . ./
 RUN rm -Rf docker/
 
 RUN set -eux; \
