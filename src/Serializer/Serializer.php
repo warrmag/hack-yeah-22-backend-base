@@ -7,6 +7,7 @@ namespace App\Serializer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
+use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -46,6 +47,7 @@ class Serializer implements SerializerInterface
     public function deserialize($data, string $type, string $format, array $context = []): mixed
     {
         try {
+            $context[DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS] = $context[DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS] ?? true;
             $context[DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS] = $context[DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS] ?? true;
 
             return $this->getSerializer()->deserialize($data, $type, $format, $context);
