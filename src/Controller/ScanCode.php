@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\Code;
+use App\Repository\RatingRepository;
 use App\Exception\BarCodeLookupProductNotFoundException;
 use App\Service\CodeService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,19 +17,24 @@ final class ScanCode
 {
     public function __construct(
         private readonly SerializerInterface $serializer,
-        private readonly CodeService $codeService
+        private readonly CodeService $codeService,
+        private readonly RatingRepository $ratingRepository
     )
     {
     }
 
     public function __invoke(Request $request): JsonResponse
     {
-        try {
+        try{
             $code = $this->serializer->deserialize($request->getContent(), Code::class, 'json');
             $trash = $this->codeService->obtainTrash($code);
+            $rating = $this->ratingRepository->fetchRating($trash);
 
             return new JsonResponse(
-                data: $this->serializer->serialize($trash, 'json'),
+                data: $this->serializer->serialize([
+                    'trash' => $trash,
+                    'rating' => $rating
+                ], 'json'),
                 status: Response::HTTP_OK,
                 json: true
             );
